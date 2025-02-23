@@ -1,5 +1,9 @@
 from django.shortcuts import render
 from .models import Book  # Import the Book model
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("<h1>Welcome to the Library Project</h1>")
 
 def list_books(request):
     books = Book.objects.all()  # Retrieve all books from the database

@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from relationship_app.views import home, list_books  # ✅ Import the new view
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path("admin/", admin.site.urls),
+    path("", home, name="home"),  # ✅ Add homepage route
+    path("books/", list_books, name="list_books"),  # Keep existing routes
 ]
