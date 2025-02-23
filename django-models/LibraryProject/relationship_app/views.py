@@ -17,3 +17,4 @@ class LibraryDetailView(DetailView):
     model = Library
     template_name = "library_detail.html"  # Uses the library_detail.html template
     context_object_name = "library"  # The variable used in the template to access the Library object
+
