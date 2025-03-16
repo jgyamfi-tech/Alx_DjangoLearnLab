@@ -1,14 +1,8 @@
 from django.urls import path
-from api.views import (
-    BookListView, BookCreateView, BookDetailView,
-    BookUpdateView, BookDeleteView
-)
+from api.views import BookListCreateView, BookDetailView
 
 urlpatterns = [
-    path('books/', BookListView.as_view(), name='book-list'),  # List all books
-    path('books/create/', BookCreateView.as_view(), name='book-create'),  # Create a new book
-    path('books/<int:pk>/', BookDetailView.as_view(), name='book-detail'),  # Retrieve a book
-    path('books/update/<int:pk>/', BookUpdateView.as_view(), name='book-update'),  # Update a book
-    path('books/delete/<int:pk>/', BookDeleteView.as_view(), name='book-delete'),  # Delete a book
+    path('books/', BookListCreateView.as_view(), name='book-list-create'),  # Supports GET & POST
+    path('books/<int:pk>/', BookDetailView.as_view(), name='book-detail'),  # Supports GET, PUT, DELETE
 ]
 

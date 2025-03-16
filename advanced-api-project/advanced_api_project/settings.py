@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework.authtoken',
     'api',
     'django_filters',
-
 ]
 
 MIDDLEWARE = [
@@ -128,3 +128,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # settings.py
 TEST_RUNNER = 'django.test.runner.DiscoverRunner'
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Ensure correct permissions
+    ]
+}
