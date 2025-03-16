@@ -4,6 +4,8 @@ from api.models import Book
 from api.serializers import BookSerializer
 from rest_framework import generics, filters
 from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as django_filters  #  Fix Import
+
 
 class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
