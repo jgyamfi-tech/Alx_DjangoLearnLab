@@ -1,32 +1,31 @@
-from rest_framework import generics, viewsets
-from .models import Book
-from .serializers import BookSerializer
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework.authentication import TokenAuthentication
+from rest_framework import generics, permissions
+from api.models import Book
+from api.serializers import BookSerializer
 
-class BookList(generics.ListAPIView):
+# ✅ List all books (Open to all users)
+class BookListView(generics.ListAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
 
-class BookViewSet(viewsets.ModelViewSet):
-    """
-    A ViewSet for viewing and editing Book instances.
-    """
-    queryset = Book.objects.all()  # Retrieve all books from the database
-    serializer_class = BookSerializer  # Use the serializer for conversion
-    
-
-class BookList(generics.ListAPIView):
+# ✅ Create a book (Only authenticated users)
+class BookCreateView(generics.CreateAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]  # Only authenticated users can access
+    permission_classes = [permissions.IsAuthenticated]
 
-class BookViewSet(viewsets.ModelViewSet):
-    """
-    A ViewSet for viewing and editing Book instances.
-    """
+# ✅ Retrieve a book (Open to all users)
+class BookDetailView(generics.RetrieveAPIView):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAdminUser]  # Only admins can modify books
+
+# ✅ Update a book (Only authenticated users)
+class BookUpdateView(generics.UpdateAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+# ✅ Delete a book (Only authenticated users)
+class BookDeleteView(generics.DestroyAPIView):
+    queryset = Book.objects.all()
+    serializer_class = BookSerializer
+    permission_classes = [permissions.IsAuthenticated]
