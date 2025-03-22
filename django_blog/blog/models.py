@@ -1,17 +1,19 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.timezone import now
 
-# Create your models here.
-
+# Keep ONLY ONE Post model
 class Post(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
-    published_date = models.DateTimeField(auto_now_add=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(default=now)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
 
+#  User Profile Model (Keep this)
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
@@ -19,4 +21,3 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return self.user.username
-

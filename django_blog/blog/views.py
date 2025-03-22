@@ -4,6 +4,11 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
 from .models import UserProfile
+from django.urls import reverse_lazy
+from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from .models import Post
+
 
 # Create your views here.
 
@@ -56,3 +61,45 @@ def profile(request):
 
     return render(request, "blog/profile.html", {"u_form": u_form, "p_form": p_form})
 
+
+# ListView - Show all posts
+class PostListView(ListView):
+    model = Post
+    template_name = "blog/post_list.html"
+    context_object_name = "posts"
+    ordering = ['-created_at']
+
+# DetailView - Show a single post
+class PostDetailView(DetailView):
+    model = Post
+    template_name = "blog/post_detail.html"
+
+# CreateView - Allow users to create a post
+class PostCreateView(LoginRequiredMixin, CreateView):
+    model = Post
+    fields = ["title", "content"]
+    template_name = "blog/post_form.html"
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+# UpdateView - Allow authors to update their posts
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ["title", "content"]
+    template_name = "blog/post_form.html"
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
+
+# DeleteView - Allow authors to delete their posts
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    success_url = reverse_lazy("post-list")
+    template_name = "blog/post_confirm_delete.html"
+
+    def test_func(self):
+        post = self.get_object()
+        return self.request.user == post.author
