@@ -2,24 +2,23 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
-from .models import UserProfile
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import Post
+from .forms import UserRegisterForm, UserUpdateForm, ProfileUpdateForm
+from .models import Post, UserProfile
 
-
-# Create your views here.
-
+# Home View
 def home(request):
     return render(request, 'blog/index.html')
+
+# Register View
 def register(request):
     if request.method == "POST":
         form = UserRegisterForm(request.POST)
         if form.is_valid():
             user = form.save()
-            UserProfile.objects.create(user=user)  # Create profile for new user
+            UserProfile.objects.create(user=user)
             login(request, user)
             messages.success(request, "Registration successful!")
             return redirect('profile')
@@ -27,6 +26,7 @@ def register(request):
         form = UserRegisterForm()
     return render(request, "blog/register.html", {"form": form})
 
+# Login View
 def user_login(request):
     if request.method == "POST":
         username = request.POST["username"]
@@ -40,11 +40,13 @@ def user_login(request):
             messages.error(request, "Invalid credentials!")
     return render(request, "blog/login.html")
 
+# Logout View
 def user_logout(request):
     logout(request)
     messages.info(request, "Logged out successfully!")
     return redirect("login")
 
+# Profile View
 @login_required
 def profile(request):
     if request.method == "POST":
@@ -60,7 +62,6 @@ def profile(request):
         p_form = ProfileUpdateForm(instance=request.user.userprofile)
 
     return render(request, "blog/profile.html", {"u_form": u_form, "p_form": p_form})
-
 
 # ListView - Show all posts
 class PostListView(ListView):
@@ -79,6 +80,7 @@ class PostCreateView(LoginRequiredMixin, CreateView):
     model = Post
     fields = ["title", "content"]
     template_name = "blog/post_form.html"
+    success_url = reverse_lazy("post-list")
 
     def form_valid(self, form):
         form.instance.author = self.request.user
@@ -89,17 +91,16 @@ class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
     fields = ["title", "content"]
     template_name = "blog/post_form.html"
+    success_url = reverse_lazy("post-list")
 
     def test_func(self):
-        post = self.get_object()
-        return self.request.user == post.author
+        return self.request.user == self.get_object().author
 
 # DeleteView - Allow authors to delete their posts
 class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Post
-    success_url = reverse_lazy("post-list")
     template_name = "blog/post_confirm_delete.html"
+    success_url = reverse_lazy("post-list")
 
     def test_func(self):
-        post = self.get_object()
-        return self.request.user == post.author
+        return self.request.user == self.get_object().author
