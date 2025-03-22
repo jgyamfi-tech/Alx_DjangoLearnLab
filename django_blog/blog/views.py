@@ -9,7 +9,6 @@ from .models import UserProfile
 
 def home(request):
     return render(request, 'blog/index.html')
-
 def register(request):
     if request.method == "POST":
         form = UserRegisterForm(request.POST)
