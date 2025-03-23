@@ -3,6 +3,8 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Post
 from .models import Comment
+from taggit.forms import TagWidget
+
 
 class UserRegisterForm(UserCreationForm):
     email = forms.EmailField()
@@ -52,3 +54,12 @@ class CommentForm(forms.ModelForm):
         if len(content) < 5:
             raise forms.ValidationError("Comment must be at least 5 characters long.")
         return content
+
+
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'tags']
+        widgets = {
+            'tags': TagWidget(),  # Provides an input for tags
+        }
