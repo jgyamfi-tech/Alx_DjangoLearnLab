@@ -49,6 +49,7 @@ def user_profile(request):
 class FollowUserView(generics.GenericAPIView):
     """Allows a user to follow another user."""
     permission_classes = [permissions.IsAuthenticated]
+    queryset = CustomUser.objects.all()  # ✅ Ensures queryset is defined
 
     def post(self, request, user_id):
         user_to_follow = get_object_or_404(CustomUser, id=user_id)
@@ -62,6 +63,7 @@ class FollowUserView(generics.GenericAPIView):
 class UnfollowUserView(generics.GenericAPIView):
     """Allows a user to unfollow another user."""
     permission_classes = [permissions.IsAuthenticated]
+    queryset = CustomUser.objects.all()  # ✅ Ensures queryset is defined
 
     def post(self, request, user_id):
         user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
