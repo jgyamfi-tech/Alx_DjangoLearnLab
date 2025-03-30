@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
+from rest_framework import serializers
+from .models import CustomUser
+
 
 User = get_user_model()
 
@@ -25,3 +28,13 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         Token.objects.create(user=user)  # Generate auth token for the user
         return user
+
+
+
+class UserSerializer(serializers.ModelSerializer):
+    followers_count = serializers.IntegerField(source='followers.count', read_only=True)
+    following_count = serializers.IntegerField(source='following.count', read_only=True)
+
+    class Meta:
+        model = CustomUser
+        fields = ['id', 'username', 'followers_count', 'following_count']
