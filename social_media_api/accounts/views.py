@@ -11,6 +11,7 @@ from .serializers import UserSerializer, RegisterSerializer
 
 User = get_user_model()
 
+
 # 🔹 User Registration
 @api_view(['POST'])
 def register_user(request):
@@ -48,11 +49,10 @@ def user_profile(request):
 class FollowUserView(generics.GenericAPIView):
     """Allows a user to follow another user."""
     permission_classes = [permissions.IsAuthenticated]
-    queryset = CustomUser.objects.all()  #  Ensures queryset is defined
 
     def post(self, request, user_id):
         user_to_follow = get_object_or_404(CustomUser, id=user_id)
-        if request.user != user_to_follow and not request.user.is_following(user_to_follow):
+        if request.user != user_to_follow and not request.user.following.filter(id=user_id).exists():
             request.user.follow(user_to_follow)
             return Response({"message": f"You are now following {user_to_follow.username}"}, status=status.HTTP_200_OK)
         return Response({"message": "You are already following this user or cannot follow yourself."}, status=status.HTTP_400_BAD_REQUEST)
@@ -62,11 +62,10 @@ class FollowUserView(generics.GenericAPIView):
 class UnfollowUserView(generics.GenericAPIView):
     """Allows a user to unfollow another user."""
     permission_classes = [permissions.IsAuthenticated]
-    queryset = CustomUser.objects.all()  # Ensures queryset is defined
 
     def post(self, request, user_id):
         user_to_unfollow = get_object_or_404(CustomUser, id=user_id)
-        if request.user.is_following(user_to_unfollow):
+        if request.user.following.filter(id=user_id).exists():
             request.user.unfollow(user_to_unfollow)
             return Response({"message": f"You have unfollowed {user_to_unfollow.username}"}, status=status.HTTP_200_OK)
         return Response({"message": "You are not following this user."}, status=status.HTTP_400_BAD_REQUEST)
