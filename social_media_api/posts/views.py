@@ -4,11 +4,11 @@ from rest_framework.pagination import PageNumberPagination
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 
-# Create your views here.
-
+#  Pagination for posts
 class PostPagination(PageNumberPagination):
     page_size = 10  # Limits 10 posts per page
 
+#  Post ViewSet
 class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all().order_by('-created_at')
     serializer_class = PostSerializer
@@ -20,6 +20,7 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+#  Comment ViewSet
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all().order_by('-created_at')
     serializer_class = CommentSerializer
@@ -28,11 +29,12 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+# User Feed View (Fixed)
 class UserFeedView(generics.ListAPIView):
     """Shows posts from users the current user follows."""
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
-    pagination_class = PostPagination  # ✅ Add pagination
+    pagination_class = PostPagination  #  Add pagination
 
     def get_queryset(self):
         user = self.request.user

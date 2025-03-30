@@ -13,7 +13,7 @@ schema_view = get_schema_view(
         description="API documentation for posts and comments",
     ),
     public=True,
-    permission_classes=[permissions.AllowAny],  # 🔧 Adjust as needed
+    permission_classes=[permissions.AllowAny],  # Adjust as needed
 )
 
 # Initialize router
@@ -21,10 +21,9 @@ router = DefaultRouter()
 router.register(r'posts', PostViewSet)
 router.register(r'comments', CommentViewSet)
 
-# Define URL patterns
+#  Define URL patterns (Removed Duplicate Code)
 urlpatterns = [
-    path('', include(router.urls)),  # ✅ API endpoints
+    path('', include(router.urls)),  
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('feed/', UserFeedView.as_view(), name='user-feed'),
 ]
-
