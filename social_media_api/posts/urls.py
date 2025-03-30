@@ -4,6 +4,7 @@ from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
 from .views import PostViewSet, CommentViewSet, UserFeedView
+from .views import LikePostView, UnlikePostView
 
 # API Schema (Swagger) Configuration
 schema_view = get_schema_view(
@@ -26,4 +27,6 @@ urlpatterns = [
     path('', include(router.urls)),  
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('feed/', UserFeedView.as_view(), name='user-feed'),
+    path('<int:pk>/like/', LikePostView.as_view(), name='like-post'),
+    path('<int:pk>/unlike/', UnlikePostView.as_view(), name='unlike-post'),
 ]
