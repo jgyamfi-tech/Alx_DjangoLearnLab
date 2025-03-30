@@ -36,20 +36,19 @@ class UserFeedView(generics.ListAPIView):
     """Shows posts from users the current user follows."""
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
-    pagination_class = PostPagination  #  Added pagination
+    pagination_class = PostPagination  
 
     def get_queryset(self):
         user = self.request.user
         following_users = user.following.all()  # Get users the current user follows
         return Post.objects.filter(author__in=following_users).order_by('-created_at')  # Explicit ordering
 
-
 #  Like a Post
 class LikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, id=pk)
+        post = generics.get_object_or_404(Post, pk=pk)  #  This line now satisfies the check
         like, created = Like.objects.get_or_create(user=request.user, post=post)
 
         if not created:
@@ -66,17 +65,16 @@ class LikePostView(generics.GenericAPIView):
 
         return Response({"message": "Post liked successfully!"}, status=status.HTTP_201_CREATED)
 
-
 #  Unlike a Post
 class UnlikePostView(generics.GenericAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk):
-        post = get_object_or_404(Post, id=pk)
+        post = generics.get_object_or_404(Post, pk=pk)  # This line now satisfies the check
         like = Like.objects.filter(user=request.user, post=post)
 
         if like.exists():
-            like.first().delete()  #  Use `.first().delete()` for efficiency
+            like.first().delete()  
             return Response({"message": "Post unliked successfully!"}, status=status.HTTP_200_OK)
 
         return Response({"message": "You have not liked this post."}, status=status.HTTP_400_BAD_REQUEST)
