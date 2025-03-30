@@ -1,10 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, permissions, filters, generics
 from rest_framework.pagination import PageNumberPagination
 from .models import Post, Comment
 from .serializers import PostSerializer, CommentSerializer
 
-#  Pagination for posts
+#  Pagination Class
 class PostPagination(PageNumberPagination):
     page_size = 10  # Limits 10 posts per page
 
@@ -29,13 +29,14 @@ class CommentViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-# User Feed View (Fixed)
+#  User Feed View (Fixed)
 class UserFeedView(generics.ListAPIView):
     """Shows posts from users the current user follows."""
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
-    pagination_class = PostPagination  #  Add pagination
+    pagination_class = PostPagination  #  Added pagination
 
     def get_queryset(self):
         user = self.request.user
-        return Post.objects.filter(author__in=user.following.all()).select_related("author").order_by('-created_at')
+        following_users = user.following.all()  # Get users the current user follows
+        return Post.objects.filter(author__in=following_users).order_by('-created_at')  #  Explicit ordering
