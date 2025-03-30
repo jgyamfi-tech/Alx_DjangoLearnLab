@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'bio', 'profile_picture', 'followers']
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)  # Ensure CharField is explicitly used
+    password = serializers.CharField(write_only=True)  # Explicitly using CharField
 
     class Meta:
         model = User
@@ -18,7 +18,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a user using create_user to hash the password properly."""
-        user = get_user_model().objects.create_user(  # Ensure create_user is explicitly used
+        user = get_user_model().objects.create_user(  # Using create_user explicitly
             username=validated_data['username'],
             email=validated_data.get('email', ''),
             password=validated_data['password']
